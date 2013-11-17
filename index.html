@@ -1,0 +1,380 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<style type="text/css">
+
+html {
+	background-color:#7C70DA;
+margin:64px
+}
+
+a:link { text-decoration:none; font-weight:bold; color:#FFFFFF; }
+a:visited { text-decoration:none; font-weight:bold; color:#FFFFFF; }
+
+li {
+color:#7C70DA; font-weight:bold;
+}
+
+</style>
+
+<!--
+background-image:url(background.png);
+background-repeat:no-repeat;
+margin:30px;
+html {
+padding:0; margin:0; border:40px solid #7C70DA; background-color:#3E31A2;
+}
+body {
+height:100%; padding:0; margin:0; border:0; background-color:#3E31A2;
+}
+
+-->
+
+<head>
+
+<script src="libs/jquery.js"></script>
+<script type="text/javascript" src="libs/jquery.jstree.js"></script>
+
+<script type="text/javascript" src="js/misc.js"> </script>
+<script type="text/javascript" src="js/tables.js"> </script>
+<script type="text/javascript" src="js/vic.js"> </script>
+<script type="text/javascript" src="js/sound.js"> </script>
+<script type="text/javascript" src="js/sid.js"> </script>
+<script type="text/javascript" src="js/cia.js"> </script>
+<script type="text/javascript" src="js/cpu.js"> </script>
+<script type="text/javascript" src="js/sidfile.js"> </script>
+<script type="text/javascript" src="js/c64.js"> </script>
+
+<script type="text/javascript">
+
+
+function OnLoadSID(arraybuffer, song) 
+{
+	sidfile = new SIDFile(new Uint8Array(arraybuffer));
+	if (song != -1) sidfile.startsong = song;
+	sidfiletemp = sidfile; // to change the songs and show the number of songs
+}
+
+var c64;
+function Init() 
+{
+	c64 = new C64("screen");    
+	c64.MainLoop();
+}
+
+</script>
+
+<!--
+<p style="background:#3E31A2;margin:64px;">
+-->
+
+<table style="background:#3E31A2; border-width:3px;border-style:outset;border-color:#3E31A2;">
+<colgroup>
+<col width="30%">
+<col width="600px">
+<col width="80px">
+</colgroup>
+<tr>
+<td colspan="2">
+<img src="Sidspectro_Logo.png" width="700" height="84" ><br>
+</td>
+</tr>
+<tr>
+<td>
+<div id="demo1" style="width:100%; height:400px; float:left; margin:0; background:#3E31A2; overflow:auto;">
+</div>
+</td>
+<td>
+<canvas id="screen" width="600px" height="400px" style="color:#a397ff; border:1px solid #000000;" onclick="OnCanvasClick(event)">
+</canvas>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>
+<p>
+<li> Music Database: <br><a href="http://www.hvsc.c64.org/">High Voltage Sid Collection</a> </li>
+</p>
+</td>
+<td>
+<p>
+<li>Copyright 2013 by Sebastian Macke <a href="http://simulationcorner.net/">simulationcorner.net</a></li>
+</p>
+</td>
+</tr>
+</table>
+<!--
+</p>
+-->
+
+<script type="text/javascript">
+
+randomlist = [];
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_I.sid", song: 1});
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_I.sid", song: 2});
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_I.sid", song: 3});
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_I.sid", song: 4});
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_I.sid", song: 5});
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_I.sid", song: 6});
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_II.sid", song: 1});
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_II.sid", song: 2});
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_II.sid", song: 5});
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Synth_Sample_III.sid", song: 1});
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Synth_Sample_III.sid", song: 3});
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Synth_Sample_III.sid", song: 11});
+randomlist.push({url: "MUSICIANS/H/Huelsbeck_Chris/Circus_Attractions.sid", song: 1});
+randomlist.push({url: "MUSICIANS/H/Huelsbeck_Chris/Compilation_I.sid", song: 3});
+randomlist.push({url: "MUSICIANS/H/Huelsbeck_Chris/Compilation_I.sid", song: 1});
+randomlist.push({url: "MUSICIANS/H/Huelsbeck_Chris/Compilation_I.sid", song: 2});
+randomlist.push({url: "MUSICIANS/H/Huelsbeck_Chris/Compilation_III.sid", song: 3});
+randomlist.push({url: "MUSICIANS/H/Huelsbeck_Chris/Compilation_III.sid", song: 4});
+randomlist.push({url: "MUSICIANS/H/Huelsbeck_Chris/Compilation_III.sid", song: 2});
+randomlist.push({url: "MUSICIANS/H/Hallen/Morricone.sid", song: 1});
+randomlist.push({url: "MUSICIANS/H/Harti/Xmas_MIX.sid", song: 1});
+randomlist.push({url: "MUSICIANS/A/Ass_It/Best_of_Axel_F.sid", song: 1});
+randomlist.push({url: "MUSICIANS/A/Ass_It/Canon_in_D.sid", song: 1});
+randomlist.push({url: "MUSICIANS/A/Ass_It/Dinkey_Kong.sid", song: 1});
+randomlist.push({url: "MUSICIANS/A/Ass_It/Magic_Music_1.sid", song: 1});
+randomlist.push({url: "MUSICIANS/W/Whittaker_David/Ghostbusters_II.sid", song: 1});
+randomlist.push({url: "MUSICIANS/W/Whittaker_David/Treasure_Island.sid", song: 1});
+randomlist.push({url: "MUSICIANS/W/Williams_Don/Canon_in_D.sid", song: 1});
+
+randomlist.push({url: "MUSICIANS/W/Williams_Don/Canon_in_D.sid", song: 1});
+randomlist.push({url: "MUSICIANS/W/Williams_Don/Nutcracker.sid", song: 1});
+randomlist.push({url: "MUSICIANS/W/Williams_Don/Estudio_Brillant.sid", song: 1});
+randomlist.push({url: "MUSICIANS/W/Williams_Don/Invention_VIII.sid", song: 1});
+randomlist.push({url: "MUSICIANS/W/Williams_Don/Invention_XIII.sid", song: 1});
+randomlist.push({url: "MUSICIANS/W/Williams_Don/Sonata_in_C.sid", song: 1});
+randomlist.push({url: "MUSICIANS/W/Williams_Don/Russian_Dance.sid", song: 1});
+
+randomlist.push({url: "MUSICIANS/R/Randall/Monkey_Island_Title_Theme.sid", song: 1});
+randomlist.push({url: "MUSICIANS/K/Kosa/Monkey_Island.sid", song: 1});
+randomlist.push({url: "MUSICIANS/K/Kosa/Terminator_2.sid", song: 1});
+
+randomlist.push({url: "MUSICIANS/K/Klegg/Rudolph_the_Red_Nosed_Reindeer.sid", song: 1});
+
+randomlist.push({url: "MUSICIANS/K/Klaewer_Oliver/Soul_Crystal.sid", song: 3});
+randomlist.push({url: "MUSICIANS/K/Klaewer_Oliver/Soul_Crystal.sid", song: 4});
+randomlist.push({url: "MUSICIANS/K/Klaewer_Oliver/Soul_Crystal.sid", song: 5});
+randomlist.push({url: "MUSICIANS/K/Klaewer_Oliver/Soul_Crystal.sid", song: 6});
+randomlist.push({url: "MUSICIANS/K/Klaewer_Oliver/Soul_Crystal.sid", song: 7});
+randomlist.push({url: "MUSICIANS/K/Klaewer_Oliver/Soul_Crystal.sid", song: 9});
+randomlist.push({url: "MUSICIANS/K/Klaewer_Oliver/Soul_Crystal.sid", song: 13});
+randomlist.push({url: "MUSICIANS/K/Klaewer_Oliver/Soul_Crystal.sid", song: 15});
+randomlist.push({url: "MUSICIANS/K/Klaewer_Oliver/Emerald_Mine.sid", song: 1});
+randomlist.push({url: "MUSICIANS/K/Klaewer_Oliver/Maniax.sid", song: 1});
+randomlist.push({url: "MUSICIANS/A/Abbott_Chris/Popcorn.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/Paul_Falco/Bomberboy.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/Paul_Falco/Lambada.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/Paul_Falco/TV_Tunes_MIX.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/1988_Top_40_MEGAMIX.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Popcorn_Mix.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Megamix_II_C64.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Megamix_II_C64_v2.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Final_Axel.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Layla_Mix.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Boogy_Woogy.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Edwins_Dream.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Enigma_Intro_Tune.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Eternal.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Learn_It_the_Hard_Way.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Nexion.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Revolution.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/This_Is_Your_Life.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Tribute.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/4-Mat/Peige.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/4-Mat/Titanic.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/4-Mat/Viola_Duet.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/4-Mat/Unused_Demo_2_Remix.sid", song: 1});
+randomlist.push({url: "MUSICIANS/F/Fanta/Jamaica_Breeze.sid", song: 1});
+randomlist.push({url: "MUSICIANS/F/Francois_Marc/Warflame.sid", song: 1});
+randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Battle_of_Britain.sid", song: 1});
+randomlist.push({url: "MUSICIANS/E/Eclipse/Anywhere.sid", song: 1});
+randomlist.push({url: "MUSICIANS/E/Eclipse/No_Name.sid", song: 1});
+randomlist.push({url: "MUSICIANS/E/Eclipse/Game_Over.sid", song: 1});
+randomlist.push({url: "MUSICIANS/E/Eco/Black_Rain.sid", song: 1});
+randomlist.push({url: "GAMES/M-R/Pitfall_II-Lost_Caverns.sid", song: 1});
+randomlist.push({url: "MUSICIANS/H/Hartwig_Stefan/Logan.sid", song: 1});
+randomlist.push({url: "MUSICIANS/H/Hartwig_Stefan/Logan.sid", song: 1});
+randomlist.push({url: "MUSICIANS/H/Hartwig_Stefan/Logan.sid", song: 4});
+randomlist.push({url: "MUSICIANS/H/Hartwig_Stefan/Yawn_loader.sid", song: 1});
+randomlist.push({url: "MUSICIANS/H/Hartwig_Stefan/Yawn_loader.sid", song: 2});
+//randomlist.push({url: "MUSICIANS/H/Hartwig_Stefan/", song: 1});
+randomlist.push({url: "MUSICIANS/H/Hobbit/Ghosts_n_Goblins.sid", song: 1});
+randomlist.push({url: "MUSICIANS/F/Fellow/Dance_on_the_Air.sid", song: 1});
+randomlist.push({url: "MUSICIANS/G/Galway_Martin/Times_of_Lore.sid", song: 1});
+randomlist.push({url: "MUSICIANS/G/Gehrmann_Holger/Oil_Imperium.sid", song: 2});
+randomlist.push({url: "MUSICIANS/G/Ghormak/Leisure_Suit_Larry.sid", song: 2});
+randomlist.push({url: "GAMES/S-Z/Zak_McKracken.sid", song: 1});
+randomlist.push({url: "GAMES/S-Z/Wizardry.sid", song: 1});
+randomlist.push({url: "GAMES/A-F/Addams_Family.sid", song: 1});
+randomlist.push({url: "GAMES/A-F/Bobsleigh.sid", song: 1});
+randomlist.push({url: "GAMES/A-F/Deep_Trouble.sid", song: 1});
+randomlist.push({url: "GAMES/A-F/Drelbs.sid", song: 2});
+randomlist.push({url: "GAMES/A-F/Flintstones.sid", song: 1});
+randomlist.push({url: "GAMES/A-F/Fairlight.sid", song: 1});
+randomlist.push({url: "DEMOS/S-Z/Synth_Sample.sid", song: 1});
+randomlist.push({url: "DEMOS/S-Z/Synth_Sample.sid", song: 3});
+randomlist.push({url: "DEMOS/S-Z/Synth_Sample.sid", song: 4});
+randomlist.push({url: "DEMOS/S-Z/Synth_Sample.sid", song: 5});
+randomlist.push({url: "DEMOS/S-Z/Synth_Sample.sid", song: 6});
+randomlist.push({url: "DEMOS/S-Z/Synth_Sample.sid", song: 7});
+randomlist.push({url: "DEMOS/S-Z/Synth_Sample.sid", song: 8});
+randomlist.push({url: "DEMOS/S-Z/Synth_Sample.sid", song: 9});
+randomlist.push({url: "Other/Top100/SYS4096.sid", song: 1});
+randomlist.push({url: "Other/Top100/One_Man_and_His_Droid.sid", song: 1});
+randomlist.push({url: "Other/Top100/Ocean_Loader_3.sid", song: 1});
+randomlist.push({url: "Other/Top100/Lightforce.sid", song: 1});
+randomlist.push({url: "Other/Top100/Kinetix.sid", song: 1});
+randomlist.push({url: "GAMES/A-F/Blues_Brothers.sid", song: 1});
+randomlist.push({url: "Other/Top100/Miami_Vice.sid", song: 1});
+randomlist.push({url: "Other/Top100/Gerry_the_Germ.sid", song: 7});
+randomlist.push({url: "Other/Top100/Delta.sid", song: 12});
+randomlist.push({url: "Other/Top100/Cybernoid_II.sid", song: 1});
+randomlist.push({url: "Other/Top100/Commando.sid", song: 2});
+randomlist.push({url: "Other/Top100/Cooperation_Demo.sid", song: 1});
+
+randomlist.push({url: "Other/Top100/Auf_Wiedersehen_Monty.sid", song: 11});
+randomlist.push({url: "Other/Top100/Monty_on_the_Run.sid", song: 3});
+randomlist.push({url: "Other/Top100/Defender_of_the_Crown.sid", song: 4});
+randomlist.push({url: "Other/Top100/Defender_of_the_Crown.sid", song: 6});
+randomlist.push({url: "Other/Top100/Compleeto.sid", song: 1});
+randomlist.push({url: "MUSICIANS/N/Norman_Paul/Super_Huey.sid", song: 1});
+randomlist.push({url: "MUSICIANS/B/Brooke_Jason/Out_Run.sid", song: 1});
+randomlist.push({url: "MUSICIANS/W/Williams_Don/Fuer_Elise.sid", song: 1});
+
+randomlist.push({url: "MUSICIANS/W/Walt/Giana_Mix.sid", song: 1});
+randomlist.push({url: "MUSICIANS/R/Roebuck_Kristopher/Great_Giana_Sisters.sid", song: 1});
+
+//randomlist.push({url: "MUSICIANS/R/Rock/Hubbard_Medley.sid", song: 1});
+//randomlist.push({url: "Other/Top100/Driller.sid", song: 1});
+// Rockn Roll
+// neverending story
+
+</script>
+<script type="text/javascript">
+
+$(function () {
+	$("#demo1").jstree({
+		"xml_data" : {
+			"ajax" : {
+				"url" : function(n){
+					return n.attr ? n.attr("id") : "xml/0.xml";
+				}
+			},
+			"xsl" : "nest"
+		},
+		"themes" : {
+			"theme" : "default",
+			"icons" : false
+		},
+		"plugins" : [ "themes", "xml_data", "ui" ]
+	})
+	.bind("select_node.jstree", function (event, data) {
+		var url = data.rslt.obj.attr("id");
+		if (url == "./C64Music/Slightly Random Choice.sid") {
+			var randomnumber = Math.floor(Math.random()*randomlist.length);
+			url = "./C64Music/"+randomlist[randomnumber].url;
+			DebugMessage(url);
+			LoadBinaryResource(url, function(arraybuffer){ OnLoadSID(arraybuffer, randomlist[randomnumber].song) });
+			return false;
+		} else
+		if (url.search(/sid$/) != -1) {
+			//alert(url);
+			LoadBinaryResource(url, function(arraybuffer){ OnLoadSID(arraybuffer, -1) });
+			return false;
+		} else {
+			return data.inst.toggle_node(data.rslt.obj);
+		}
+	})
+});
+</script>
+
+
+<script>
+
+function getMousePos(canvas, evt) 
+{
+	var rect = canvas.getBoundingClientRect();
+	return {
+x: evt.clientX - rect.left,
+y: evt.clientY - rect.top
+	};
+}
+
+function OnCanvasClick(event)
+{
+	event = event || window.event;
+	var canvas = document.getElementById('screen');
+	var mousepos = getMousePos(canvas, event);
+	var x = mousepos.x;
+	var y = mousepos.y;
+	if (typeof sidfiletemp != 'undefined')
+	{
+		if ((x>=100) && (x<=110))
+		if ((y>=2) && (y<=22))
+		{
+			sidfiletemp.startsong++;
+			if (sidfiletemp.startsong > sidfiletemp.songs) sidfiletemp.startsong = 1;
+			sidfile = sidfiletemp;
+		}
+		if ((x>=0) && (x<=10))
+		if ((y>=2) && (y<=22))
+		{
+			sidfiletemp.startsong--;
+			if (sidfiletemp.startsong == 0) sidfiletemp.startsong = sidfiletemp.songs;
+			sidfile = sidfiletemp;
+		}
+	}
+}
+
+function RedrawSpectrum()
+{
+	window.requestAnimationFrame(RedrawSpectrum, c64.canvas);	
+	var pos = ((c64.sid.soundbuffer.GetTime()*22050)>>6)%c64.screen.width;
+	c64.canvas.putImageData(c64.imagedata, -pos, 0);
+	c64.canvas.putImageData(c64.imagedata, c64.screen.width-pos, 0);
+
+	c64.canvas.fillStyle="#000000";
+	c64.canvas.fillRect(0,0,40,c64.screen.height);
+
+	c64.canvas.lineWidth = 2;
+	c64.canvas.strokeStyle="#FFFFFF";
+	c64.canvas.beginPath();
+	c64.canvas.moveTo(150, 0);
+	c64.canvas.lineTo(150, c64.screen.height);
+	c64.canvas.stroke();
+
+	if (typeof sidfiletemp != 'undefined')
+	{
+		var xofs = -30;
+		c64.canvas.fillStyle="#FFFFFF";
+		c64.canvas.beginPath();
+		c64.canvas.moveTo(30+xofs, 20-8);
+		c64.canvas.lineTo(40+xofs, 10-8);
+		c64.canvas.lineTo(40+xofs, 30-8);
+		c64.canvas.fill();
+
+		c64.canvas.beginPath();
+		c64.canvas.moveTo(70+70+xofs, 20-8);
+		c64.canvas.lineTo(60+70+xofs, 10-8);
+		c64.canvas.lineTo(60+70+xofs, 30-8);
+		c64.canvas.fill();
+		c64.canvas.fillText("Song No. " + sidfiletemp.startsong + " of " + sidfiletemp.songs,  45+xofs, 23-8);
+		c64.canvas.fillText(sidfiletemp.name,  45+xofs, 30);
+		c64.canvas.fillText(sidfiletemp.author,  45+xofs, 45);
+		c64.canvas.fillText(sidfiletemp.released,  45+xofs, 60);
+	}
+}
+
+</script>
+</head>
+
+<body onload="Init();RedrawSpectrum();">
+
+
+
+</body>
+
+
+</html>
