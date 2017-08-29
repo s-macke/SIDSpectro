@@ -32,7 +32,7 @@ string ConvertDir(string dir)
 
 void ParseDir(string dir)
 {
-	struct dirent *ep;     
+	struct dirent *ep;
 	cout << ConvertDir(dir) << "\n";
 	string cdir = string("xml/")+ConvertDir(dir)+".xml";
 	FILE *file = fopen( cdir.c_str(), "w");
@@ -64,7 +64,7 @@ void ParseDir(string dir)
 				fprintf(file, "    <content><name><![CDATA[%s]]></name></content>\n", ep->d_name);
 				fprintf(file, "  </item>\n");
 			} else
-			{  
+			{
 				string newdir = dir + ep->d_name + "/";
 				string cdir2 = string("xml/")+ConvertDir(newdir)+".xml";
 
@@ -74,11 +74,11 @@ void ParseDir(string dir)
 					fprintf(file, "    <content><name><![CDATA[%s]]></name></content>\n", ep->d_name);
 					fprintf(file, "  </item>\n");
 
-					ParseDir(newdir); 
+					ParseDir(newdir);
 				}
 			}
 		}
-		closedir (dp);
+		//closedir (dp);
 	}
 	else
 	{
