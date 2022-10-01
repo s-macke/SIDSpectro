@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>reSID Test</title>
+</head>
+
+<body>
+
+<script>
+  let reSID = {}
+  let ram;
+
+  let str = "";
+  function Stdout(strp) {
+    for (let i = 0; i < 256; i++) {
+      if (ram[strp + i] === 0) break;
+      if (ram[strp + i] < 0x20) {
+        if (ram[strp + i] === 0x0A) {
+          console.log(str);
+          str = "";
+          continue;
+        }
+      }
+      str += String.fromCharCode(ram[strp + i]);
+    }
+    console.log(str);
+    str = "";
+
+  }
+
+    async function Load() {
+        let importOb = {
+            env: {
+                memory: new WebAssembly.Memory({initial: 2048, maximum: 2048}), // 32 MB
+                debug: Stdout
+            }
+        };
+        let response = await fetch("resid.wasm")
+        let bytes = await response.arrayBuffer()
+        let module = await WebAssembly.instantiate(bytes, importOb)
+        reSID = module.instance.exports
+        console.log(reSID)
+        ram = new Uint8Array(importOb.env.memory.buffer, 0);
+        reSID.Init()
+        /*
+        let memory = new Uint8Array(instance.exports.memory.buffer)
+        */
+        Test()
+    }
+
+    async function Test() {
+        console.log("Test")
+        //reSID.Reset()
+        console.log("Test done")
+        console.log(reSID.GetBuffer())
+
+    }
+
+    Load()
+</script>
+
+
+</body>
+</html>
+
