@@ -28,7 +28,7 @@ double sqrt(double x) {
     return z;
 }
 
-double exp2(double x) {
+double exp(double x) {
     double x1 = 1;
     int n = 0;
     double sum = 0.;
@@ -38,27 +38,37 @@ double exp2(double x) {
     } while (fabs(x1) > 0.00001);
     return sum;
 }
-
-double exp(double n) {
+/*
+double exp2(double n) {
+    debug("exp");
+    debugint(n*100.);
     int a = 0, b = n > 0;
     double c = 1, d = 1, e = 1;
     for (b || (n = -n); e + .00001 < (e += (d *= n) / (c *= ++a)););
     // approximately 15 iterations
+    //debug("exp end");
     return b ? e : 1 / e;
 }
-
+*/
 double log(const double n) {
     // Basic logarithm computation.
     const double euler = 2.7182818284590452354;
     unsigned a = 0, d;
     double b, c, e, f;
     if (n > 0) {
-        for (c = n < 1 ? 1 / n : n; (c /= euler) > 1; ++a);
-        c = 1 / (c * euler - 1), c = c + c + 1, f = c * c, b = 0;
-        for (d = 1, c /= 2; e = b, b += 1 / (d * c), b - e/* > 0.0000001 */;)
-            d += 2, c *= f;
-    } else b = (n == 0) / 0.;
-    return n < 1 ? -(a + b) : a + b;
+        for (c = n < 1. ? 1. / n : n; (c /= euler) > 1.; ++a);
+        c = 1. / (c * euler - 1.);
+        c = c + c + 1.;
+        f = c * c;
+        b = 0.;
+        for (d = 1, c /= 2.; e = b, b += 1. / (d * c), b - e/* > 0.0000001*/;) {
+            d += 2;
+            c *= f;
+        }
+    } else {
+        b = (n == 0) / 0.;
+    }
+    return n < 1. ? -(a + b) : a + b;
 }
 
 double log10(const double n) {
@@ -100,33 +110,36 @@ double ceil(double num) {
 extern char __heap_base; // start of dynamic memory allocation (heap). Exported by clang
 char *allocPointer = NULL;
 
-void *operator new[](size_t size) {
-    debug("Allocating array of size ");
+void *malloc(size_t size) {
     if (allocPointer == NULL) { // First call: initialize
         allocPointer = &__heap_base;
     }
     void *p = allocPointer;
     allocPointer += size;
     return p;
+}
+
+void *operator new[](size_t size) {
+    debug("Allocating array of size ");
+    debugint(size);
+    return malloc(size);
 }
 
 void *operator new(size_t size) {
     debug("Allocating object of size ");
-    if (allocPointer == NULL) { // First call: initialize
-        allocPointer = &__heap_base;
-    }
-    void *p = allocPointer;
-    allocPointer += size;
-    return p;
+    debugint(size);
+    return malloc(size);
 }
 
 void operator delete[](void *ptr) noexcept {
+    debug("Deleting array");
     // ignore
 }
 
 extern "C" {
 
 int __cxa_atexit(void (*func)(void *), void *arg, void *dso_handle) {
+    debug("__cxa_atexit called: This should neven happen in wasm");
     // never used
     return 0;
 }
@@ -137,4 +150,60 @@ void *memset(void *s, int c, size_t n) {
     return s;
 }
 
+}
+
+// from stack overflow
+int itoa(int value, char *sp, int radix)
+{
+    char tmp[16];// be careful with the length of the buffer
+    char *tp = tmp;
+    int i;
+    unsigned v;
+
+    int sign = (radix == 10 && value < 0);
+    if (sign)
+        v = -value;
+    else
+        v = (unsigned)value;
+
+    while (v || tp == tmp)
+    {
+        i = v % radix;
+        v /= radix;
+        if (i < 10)
+            *tp++ = i+'0';
+        else
+            *tp++ = i + 'a' - 10;
+    }
+
+    int len = tp - tmp;
+
+    if (sign)
+    {
+        *sp++ = '-';
+        len++;
+    }
+
+    while (tp > tmp)
+        *sp++ = *--tp;
+
+    return len;
+}
+
+void debugint(int i) {
+    char buf[18];
+    memset(buf, 0, 18);
+    itoa(i, buf, 10);
+    debug(buf);
+}
+
+// Very basic printf implementation.
+int printf(const char *format, ...) {
+    debug(format);
+    return 0;
+}
+int puts(const char *s) {
+    debug(s);
+    debug("\n");
+    return 0;
 }

@@ -3,7 +3,8 @@
 
 extern "C" {
 
-extern void debug(const char *str);
+    extern void debug(const char *str);
+    void debugint(int i);
 
 }
 

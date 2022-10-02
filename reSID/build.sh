@@ -9,7 +9,7 @@ clang -Os -nostdlib --target=wasm32 -DVERSION=\"1.0-pre2\" -Ilib    \
 -Wl,--strip-all    \
 -Wl,--import-memory    \
 -Wl,--allow-undefined \
--Wl,--export=Init,--export=Reset,--export=Clock,--export=GetBuffer,--export=__heap_base   \
+-Wl,--export=Init,--export=Reset,--export=Clock,--export=GetBuffer,--export=Read,--export=Write,--export=Clock,--export=__heap_base   \
 *.cc lib/lib.cc -o resid.wasm
 
 # from wabt

@@ -1,38 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>reSID Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>reSID Test</title>
 </head>
 
 <body>
 
 <script>
-  let reSID = {}
-  let ram;
+    let reSID = {}
+    let ram; // 8 bit view to RAM
+    let ram16; // signed int view to RAM
 
-  let str = "";
-  function Stdout(strp) {
-    for (let i = 0; i < 256; i++) {
-      if (ram[strp + i] === 0) break;
-      if (ram[strp + i] < 0x20) {
-        if (ram[strp + i] === 0x0A) {
-          console.log(str);
-          str = "";
-          continue;
+    let str = "";
+
+    function Stdout(strp) {
+        for (let i = 0; i < 256; i++) {
+            if (ram[strp + i] === 0) break;
+            if (ram[strp + i] < 0x20) {
+                if (ram[strp + i] === 0x0A) {
+                    console.log(str);
+                    str = "";
+                    continue;
+                }
+            }
+            str += String.fromCharCode(ram[strp + i]);
         }
-      }
-      str += String.fromCharCode(ram[strp + i]);
+        console.log(str);
+        str = "";
     }
-    console.log(str);
-    str = "";
-
-  }
 
     async function Load() {
         let importOb = {
             env: {
-                memory: new WebAssembly.Memory({initial: 2048, maximum: 2048}), // 32 MB
+                memory: new WebAssembly.Memory({initial: 2048, maximum: 2048}), // 32 MB // we need approx 23 MB for reSID
+                //memory: new WebAssembly.Memory({initial: 6400, maximum: 6400}), // 100 MB
                 debug: Stdout
             }
         };
@@ -42,6 +44,7 @@
         reSID = module.instance.exports
         console.log(reSID)
         ram = new Uint8Array(importOb.env.memory.buffer, 0);
+        ram16 = new Int16Array(importOb.env.memory.buffer, 0);
         reSID.Init()
         /*
         let memory = new Uint8Array(instance.exports.memory.buffer)
@@ -51,9 +54,26 @@
 
     async function Test() {
         console.log("Test")
-        //reSID.Reset()
+        reSID.Reset()
         console.log("Test done")
         console.log(reSID.GetBuffer())
+
+        reSID.Write(24, 15); // full volume
+        reSID.Write(0, 0x52); // channel 1 set Low
+        reSID.Write(1, 0x07); // channel 1 set high
+        reSID.Write(5, 97); // attack, decay
+        reSID.Write(6, 200); // sustain, release
+
+        //Write(4, 1<<4 | 1); // triangle and activate gate
+        reSID.Write(4, 1 << 5 | 1); // sawtooth and activate gate
+        let n = reSID.Clock(200000, 10000);
+        console.log("n = " + n)
+        let bufferAddress = reSID.GetBuffer() >> 1; // divide by 2 because of the 16 bit view
+        for(let i=0; i<n; i++) {
+            console.log(ram16[bufferAddress + i])
+        }
+
+
 
     }
 

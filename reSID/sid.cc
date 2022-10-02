@@ -26,7 +26,6 @@
 
 #include "sid.h"
 #include <math.h>
-#include <debug.h>
 /*
 #include <iostream>
 #include <fstream>
@@ -57,7 +56,6 @@ inline short clip(int input)
 // ----------------------------------------------------------------------------
 SID::SID()
 {
-  debug("Bis hier hin\n");
   // Initialize pointers.
   sample = 0;
   fir = 0;
