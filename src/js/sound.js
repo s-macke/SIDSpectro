@@ -2,120 +2,100 @@
 // ---------------- Sound Device -------------------
 // -------------------------------------------------
 
+"use strict";
+
 /* This object provides a loop sound buffer and a timer */
 
-function isIE () {
-	var myNav = navigator.userAgent.toLowerCase();
-	return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+function isIE() {
+    let myNav = navigator.userAgent.toLowerCase();
+    return !(myNav.indexOf('msie') !== -1);
 }
 
-function LoopSoundBuffer(samples, sampleslen) 
+/*
+function PlayWebkit(context)
 {
-	this.samples = samples;
-	this.sampleslen = sampleslen;
-	if (typeof AudioContext !== "undefined") 
-	{
-		this.context = new AudioContext();
-		this.WebkitSetup();
-	} else if (typeof webkitAudioContext !== "undefined")
-	{
-		this.context = new webkitAudioContext();
-		this.WebkitSetup();
-	} else if ((typeof Audio !== "undefined") && (!isIE()))
-	{
-		this.MozillaSetup();
-	} else
-	{
-		this.DummySetup();
-	}
+	let source = context.createBufferSource();
+	let soundBuffer = context.createBuffer(1, 44100, 22050);
+	let buffer = soundBuffer.getChannelData(0);
+	for(let i=0; i<44100; i++) buffer[i] = Math.sin(i/10);
+	source.buffer = soundBuffer;
+	source.connect(context.destination);
+	source.start(0);	
 }
-
-LoopSoundBuffer.prototype.MozillaSetup = function()
-{
-	this.audio = new Audio();
-	this.audio.mozSetup(1, this.samples);
-	this.buffer = new Float32Array(this.sampleslen);
-	this.lastoffset = 0;
-	this.GetTime = function(){return this.audio.mozCurrentSampleOffset()/this.samples;};
-	this.Refill();
-}
-
-LoopSoundBuffer.prototype.PlayBuffer = function(pos)
-{
-	var idx = pos%4;
-	this.source[idx] = this.context.createBufferSource(); // creates a sound source
-
-	this.soundBuffer[idx] = this.context.createBuffer(1, this.sampleslen/4, this.samples);
-	var buffer = this.soundBuffer[idx].getChannelData(0);
-	var offset = (this.pos%4) * this.sampleslen/4;
-	for(var i=0; i<this.sampleslen/4; i++)
-	{
-		buffer[i] = this.buffer[i + offset];
-	}
-	this.source[idx].buffer = this.soundBuffer[idx];
-	this.source[idx].connect(this.context.destination);
-	this.source[idx].onended = this.OnEnded.bind(this);
-	this.source[idx].start(this.pos*(this.sampleslen/4)/this.samples);
-}
-
-
-LoopSoundBuffer.prototype.OnEnded = function()
-{
-	this.PlayBuffer(this.pos);
-	this.pos++;
-}
-
-
-LoopSoundBuffer.prototype.WebkitSetup = function()
-{
-	this.GetTime = function(){return this.context.currentTime;};
-
-	this.source = [0,0,0,0];
-	this.soundBuffer = [0,0,0,0];
-
-	// Version 1, works also in Firefox 25
-	this.pos = 1;
-	this.buffer = new Float32Array(this.sampleslen)
-	this.PlayBuffer(0);
-	this.OnEnded();
-
-	// Version 2, works only in Chrome
-	/*
-	this.soundBuffer = this.context.createBuffer(1, this.sampleslen, this.samples);
-	this.buffer = this.soundBuffer.getChannelData(0);
-	this.source = this.context.createBufferSource(); // creates a sound source
-	this.source.buffer = this.soundBuffer;
-	this.source.loop = true;
-	this.source.connect(this.context.destination);	
-	this.source.start(0);
 */
+
+function LoopSoundBuffer(samples, sampleslen) {
+    this.samples = samples;
+    this.sampleslen = sampleslen;
+    this.buffer = new Float32Array(this.sampleslen);
+
+    //this.DummySetup();
+    //return;
+    //this.GetTime = function(){return ((new Date().getTime()))/1000.;};
+
+    if (typeof AudioContext !== "undefined") {
+        this.context = new window.AudioContext();
+        this.WebkitSetup();
+    } else if (typeof webkitAudioContext !== "undefined") {
+        this.context = new window.webkitAudioContext();
+        this.WebkitSetup();
+    } else {
+        this.DummySetup();
+    }
+
 }
 
-LoopSoundBuffer.prototype.DummySetup = function()
-{
-	this.buffer = new Float32Array(this.sampleslen);
-	this.starttime = new Date().getTime();
-	this.GetTime = function(){return ((new Date().getTime()) - this.starttime)/1000.;};
+LoopSoundBuffer.prototype.PlayBuffer = function (pos) {
+    let idx = pos & 3;
+    let buffer = this.soundbuffer[idx].getChannelData(0);
+    let offset = idx * this.sampleslen / 4;
+    for (let i = 0; i < this.sampleslen / 4; i++) {
+        buffer[i] = this.buffer[i + offset];
+        //buffer[i] = Math.sin((i + pos*this.sampleslen/4)/10.)*0.5;
+    }
+
+    let source = this.context.createBufferSource(); // creates a sound source
+    source.buffer = this.soundbuffer[idx];
+    source.connect(this.context.destination);
+    source.onended = this.OnEnded.bind(this);
+    source.start(pos * (this.sampleslen / 4) / this.samples);
+    //source.noteOn(0);
+
+    // save the source. Otherwise the garbage collector might take them and the function OnEnded is not executed
+    this.source[pos % 4] = source;
 }
 
-LoopSoundBuffer.prototype.Refill = function()
-{
-	var currentoffset = this.audio.mozCurrentSampleOffset();
-	var lastoffset = this.lastoffset;	
-	var diff = currentoffset+this.samples - lastoffset;
-	if (diff < 0) return;
-	var locbuffer = new Float32Array(diff);
-	var offset = Math.floor(lastoffset%(this.sampleslen));
-	for(var i=0; i<diff; i++) 
-	{
-		locbuffer[i] = this.buffer[offset];
-		offset++;
-		if (offset >= this.sampleslen) offset = 0;
-	}
-	this.lastoffset = lastoffset + diff;
-	var written = this.audio.mozWriteAudio(locbuffer);
-	//console.log(written);
-	//console.log(this.audio.mozCurrentSampleOffset());
-	window.setTimeout(this.Refill.bind(this), 200);
+
+LoopSoundBuffer.prototype.OnEnded = function () {
+    this.PlayBuffer(this.pos);
+    this.pos++;
+}
+
+
+LoopSoundBuffer.prototype.WebkitSetup = function () {
+    this.GetTime = function () {
+        return this.context.currentTime;
+    }.bind(this);
+    //this.starttime = new Date().getTime();
+    //this.GetTime = function(){return ((new Date().getTime()) - this.starttime)/1000.;};
+
+    this.source = new Array(4);
+    this.soundbuffer = new Array(4);
+    for (var i = 0; i < 4; i++) {
+        this.soundbuffer[i] = this.context.createBuffer(1, this.sampleslen / 4, this.samples);
+    }
+
+
+    this.PlayBuffer(0);
+    this.PlayBuffer(1);
+    this.pos = 2;
+
+}
+
+LoopSoundBuffer.prototype.DummySetup = function () {
+    this.starttime = new Date().getTime();
+    this.GetTime = function () {
+        return ((new Date().getTime()) - this.starttime) / 1000.;
+    };
 }
 

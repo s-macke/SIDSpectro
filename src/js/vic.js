@@ -14,8 +14,8 @@ function VICII(_mem, _interruptfunc)
 VICII.prototype.Reset = function()
 {
 	this.cycles = 0;
-	for(var i=0; i<64; i++) this.regs[i] = 0x0;
-	for(var i=0; i<1024; i++) this.colorram[i] = 0x0;
+	for(let i=0; i<64; i++) this.regs[i] = 0x0;
+	for(let i=0; i<1024; i++) this.colorram[i] = 0x0;
 	this.rasterline = 0x0;
 
 	this.bank = 0;
@@ -76,12 +76,12 @@ VICII.prototype.Write = function(addr, x)
 	switch(addr)
 	{
 	case 0x11:
-		this.ecm = (x & (1<<6)) != 0;
-		this.bmm = (x & (1<<5)) != 0;
+		this.ecm = (x & (1<<6)) !== 0;
+		this.bmm = (x & (1<<5)) !== 0;
 		this.scrolly = x & 7;
 		break;
 	case 0x16:
-		this.mcm = (x & (1<<4)) != 0;
+		this.mcm = (x & (1<<4)) !== 0;
 		this.scrollx = x & 7;
 		break;
 
@@ -132,8 +132,8 @@ VICII.prototype.CalcSteps = function(count)
 
 	if (this.regs[0x1a] & 1)
 	{
-		var lineirq = this.regs[0x12] + (((this.regs[0x11] >> 7) & 1) << 8);
-		if (this.rasterline == lineirq)
+		let lineirq = this.regs[0x12] + (((this.regs[0x11] >> 7) & 1) << 8);
+		if (this.rasterline === lineirq)
 		{
 			//if (regs[0x19] == 0)
 			{
