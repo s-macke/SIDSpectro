@@ -6,7 +6,7 @@
 
 //var keyboard = new KeyboardInput();
 
-function C64(screenid) {
+function C64(_imagedata) {
     this.cyclespersecond = 1000000;
     this.mem = new Uint8Array(0x10000);
     this.basic_in = true;
@@ -22,17 +22,7 @@ function C64(screenid) {
     //this.cia2 = new CIA6526(this.cpu.MaskableInterrupt.bind(this.cpu), 2);
     this.vic = new VICII(this.mem, this.cpu.MaskableInterrupt.bind(this.cpu));
 
-    this.screen = document.getElementById(screenid);
-    this.canvas = this.screen.getContext("2d");
-    this.imagedata = this.canvas.getImageData(0, 0, this.screen.width, this.screen.height);
-    //this.imagedata = this.canvas.createImageData(800, 400);
-    for (let i = 0; i < this.screen.width * this.screen.height; i++) {
-        this.imagedata.data[(i << 2) + 0] = 0x00;
-        this.imagedata.data[(i << 2) + 1] = 0x00;
-        this.imagedata.data[(i << 2) + 2] = 0x00;
-        this.imagedata.data[(i << 2) + 3] = 0xFF;
-    }
-
+    this.imagedata = _imagedata;
     this.sid = new SID6581(this.cyclespersecond, this.imagedata.data);
     this.starttime = this.sid.soundbuffer.GetTime();
     this.count = 0;
@@ -213,13 +203,11 @@ function GenJSR(addr, memoffset) {
     return memoffset
 }
 
-
 function GenLDAi(x, memoffset) {
     c64.Write(memoffset++, 0xA9); // lda IMM
     c64.Write(memoffset++, x);
     return memoffset;
 }
-
 
 function LoadSIDFile(sidfile) {
     if (!sidfile.data) return;

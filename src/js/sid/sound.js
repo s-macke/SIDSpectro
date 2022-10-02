@@ -2,27 +2,9 @@
 // ---------------- Sound Device -------------------
 // -------------------------------------------------
 
-"use strict";
-
 /* This object provides a loop sound buffer and a timer */
 
-function isIE() {
-    let myNav = navigator.userAgent.toLowerCase();
-    return !(myNav.indexOf('msie') !== -1);
-}
-
-/*
-function PlayWebkit(context)
-{
-	let source = context.createBufferSource();
-	let soundBuffer = context.createBuffer(1, 44100, 22050);
-	let buffer = soundBuffer.getChannelData(0);
-	for(let i=0; i<44100; i++) buffer[i] = Math.sin(i/10);
-	source.buffer = soundBuffer;
-	source.connect(context.destination);
-	source.start(0);	
-}
-*/
+"use strict";
 
 function LoopSoundBuffer(samples, sampleslen) {
     this.samples = samples;
@@ -36,13 +18,9 @@ function LoopSoundBuffer(samples, sampleslen) {
     if (typeof AudioContext !== "undefined") {
         this.context = new window.AudioContext();
         this.WebkitSetup();
-    } else if (typeof webkitAudioContext !== "undefined") {
-        this.context = new window.webkitAudioContext();
-        this.WebkitSetup();
     } else {
         this.DummySetup();
     }
-
 }
 
 LoopSoundBuffer.prototype.PlayBuffer = function (pos) {
@@ -81,10 +59,9 @@ LoopSoundBuffer.prototype.WebkitSetup = function () {
 
     this.source = new Array(4);
     this.soundbuffer = new Array(4);
-    for (var i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
         this.soundbuffer[i] = this.context.createBuffer(1, this.sampleslen / 4, this.samples);
     }
-
 
     this.PlayBuffer(0);
     this.PlayBuffer(1);
