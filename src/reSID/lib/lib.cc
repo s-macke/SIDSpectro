@@ -1,4 +1,4 @@
-#include<debug.h>
+#include"debug.h"
 
 typedef unsigned long size_t;
 #define NULL 0

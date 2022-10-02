@@ -10,7 +10,7 @@ var noiseLSB = new Array(NOISETABLESIZE);
 var noiseMSB = new Array(NOISETABLESIZE)
 var noiseMID = new Array(NOISETABLESIZE);
 
-for (var i = 0; i < NOISETABLESIZE; i++) 
+for (var i = 0; i < NOISETABLESIZE; i++)
 {
 	noiseLSB[i] = ((((i >> (7 - 2)) & 0x04) | ((i >> (4 - 1)) & 0x02)
 	| ((i >> (2 - 0)) & 0x01))) & 0xFF;
@@ -135,7 +135,7 @@ SIDChannel.prototype.NextSample = function()
 	var oldphase = Math.floor(this.phase);
 	this.phase += this.frequency/samples;
 	var newphase = Math.floor(this.phase);
-	
+
 	switch(this.waveform)
 	{
 	case wvnone:
@@ -269,10 +269,13 @@ SID6581.prototype.NextSample = function()
 	return y*0.3;
 }
 
+var timer = 0;
+
 //var SIDbufferpos = 60000;
 //var SIDoldcount = 0;
 SID6581.prototype.Update = function(count)
 {
+    timer = count;
 	var currenttime = count / this.cyclespersecond;
 	var currentsample = currenttime*samples;
 	var oldsample = this.starttime*samples;
@@ -337,7 +340,11 @@ SID6581.prototype.Write = function(index, value)
 
 	var oldvalue = this.regs[index];
 	var i = Math.floor(index/7); // which channel
-
+    if (i != 2)
+    {
+        this.regs[index] = value;
+        return;
+    }
 	switch(index)
 	{
 	case 24:
@@ -352,7 +359,7 @@ SID6581.prototype.Write = function(index, value)
 		var f = this.regs[0+i*7] | (this.regs[1+i*7]<<8);
 		if (f == 0) this.channel[i].frequency = 0.01;
 		else this.channel[i].frequency = f * 0.060959458;
-		this.channel[i].pulsewidth = ((this.regs[3+i*7] & 15)*256 + this.regs[2+i*7])/40.95/100.;
+        this.channel[i].pulsewidth = ((this.regs[3+i*7] & 15)*256 + this.regs[2+i*7])/40.95/100.;
 
 		//this.channel[i].pw = (this.regs[2+i*7] + ((this.regs[3+i*7]&0xF)<<8)) * 0x100100;
 		//this.fs = this.regs[0+i*7] | (this.regs[1+i*7]<<8);
@@ -429,7 +436,13 @@ SID6581.prototype.Write = function(index, value)
 			this.channel[i].phaseadsr = phattack;
 			this.channel[i].damplitude = 1./this.channel[i].a;
 			this.channel[i].amplitude = 0;
-			this.channel[i].gate = gopen;
+            this.channel[i].gate = gopen;
+            if (i == 2)
+            {
+                var f = this.regs[0+i*7] | (this.regs[1+i*7]<<8);
+                console.log("" + Math.floor(timer/1000) + " " + f);
+            }
+
 		}
 		break;
 	}
