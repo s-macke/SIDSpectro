@@ -1,6 +1,7 @@
 
 #include "sid.h"
 #include "voice.h"
+#include "siddefs.h"
 #include <debug.h>
 
 reSID::SID *sid;
@@ -13,6 +14,8 @@ extern "C"
 void Init() {
     debug("Init");
     sid = new reSID::SID();
+    sid->set_sampling_parameters(985248, reSID::SAMPLE_RESAMPLE, 44100);
+    //sid->enable_filter(true);
     buf = new short[44100];
 }
 
@@ -30,10 +33,15 @@ short* GetBuffer() {
     return buf;
 }
 
-reSID::SID::State* GetState() {
-    static reSID::SID::State state;
-    state = sid->read_state();
-    return &state;
+short* GetState() {
+    static short data[3 + 3];
+    data[0] = sid->voice[0].wave.freq;
+    data[1] = sid->voice[1].wave.freq;
+    data[2] = sid->voice[2].wave.freq;
+    data[3] = sid->voice[0].envelope.output();
+    data[4] = sid->voice[1].envelope.output();
+    data[5] = sid->voice[2].envelope.output();
+    return data;
 }
 
 

@@ -36,6 +36,8 @@ Spectrum.prototype.getMousePos = function (evt) {
 }
 
 Spectrum.prototype.redrawSpectrum = function () {
+    window.requestAnimationFrame(this.redrawSpectrum.bind(this));
+    // GetTime in seconds
     let pos = ((c64.sid.soundbuffer.GetTime() * 22050.) >> 6) % this.canvas.width;
     this.ctx.putImageData(this.backBuffer, -pos, 0);
     this.ctx.putImageData(this.backBuffer, this.canvas.width - pos, 0);
@@ -69,7 +71,6 @@ Spectrum.prototype.redrawSpectrum = function () {
         this.ctx.fillText(sidfiletemp.author, 45 + xofs, 45);
         this.ctx.fillText(sidfiletemp.released, 45 + xofs, 60);
     }
-    window.requestAnimationFrame(this.redrawSpectrum.bind(this));
     //window.setTimeout(RedrawSpectrum, 500);
 }
 
@@ -107,6 +108,7 @@ Spectrum.prototype.onUpdateSpectrum = function (i, frequency0, frequency1, frequ
     }
     freq = Math.floor(frequency0 * 0.3) + 1;
     ampl = amplitude0 * 255;
+    if (ampl > 255) ampl = 255;
     if (freq <= 399) {
         let offset = 2400 * (399 - freq) + column
         data[offset + 0] = ampl;
@@ -115,6 +117,7 @@ Spectrum.prototype.onUpdateSpectrum = function (i, frequency0, frequency1, frequ
     }
     freq = Math.floor(frequency1 * 0.3) + 1;
     ampl = amplitude1 * 255;
+    if (ampl > 255) ampl = 255;
     if (freq <= 399) {
         let offset = 2400 * (399 - freq) + column + 1;
         data[offset] = ampl;
@@ -123,12 +126,11 @@ Spectrum.prototype.onUpdateSpectrum = function (i, frequency0, frequency1, frequ
     }
     freq = Math.floor(frequency2 * 0.3) + 1;
     ampl = amplitude2 * 255;
+    if (ampl > 255) ampl = 255;
     if (freq <= 399) {
         let offset = 2400 * (399 - freq) + column + 2;
         data[offset] = ampl;
         data[offset + 2400] = ampl * 0.5;
         data[offset - 2400] = ampl * 0.5;
     }
-
-
 }

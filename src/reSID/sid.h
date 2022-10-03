@@ -103,7 +103,7 @@ public:
 
   void debugoutput(void);
 
- protected:
+// protected:
   static double I0(double x);
   int clock_fast(cycle_count& delta_t, short* buf, int n, int interleave);
   int clock_interpolate(cycle_count& delta_t, short* buf, int n, int interleave);

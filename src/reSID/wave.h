@@ -60,7 +60,7 @@ public:
   void set_waveform_output();
   void set_waveform_output(cycle_count delta_t);
 
-protected:
+//protected:
   void clock_shift_register();
   void write_shift_register();
   void set_noise_output();

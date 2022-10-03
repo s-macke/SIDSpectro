@@ -81,10 +81,14 @@ ReSID.prototype.Update = function (count) {
     this.oldcount = count;
 
     let bufferAddress = this.reSID.GetBuffer() >> 1; // divide by 2 because of the 16 bit view
-    let state = this.reSID.GetState()
-    let frequency0 = (this.ram[state + 0 + 0 * 7] | (this.ram[state + 1 + 0 * 7] << 8)) * 0.060959458;
-    let frequency1 = (this.ram[state + 0 + 1 * 7] | (this.ram[state + 1 + 1 * 7] << 8)) * 0.060959458;
-    let frequency2 = (this.ram[state + 0 + 2 * 7] | (this.ram[state + 1 + 2 * 7] << 8)) * 0.060959458;
+    let state = this.reSID.GetState() >> 1; // divide by 2 because of the 16 bit view
+    let frequency0 = this.ram16[state + 0] * 0.060959458;
+    let frequency1 = this.ram16[state + 1] * 0.060959458;
+    let frequency2 = this.ram16[state + 2] * 0.060959458;
+    let amplitude0 = this.ram16[state + 3] / 256. * 4.;
+    let amplitude1 = this.ram16[state + 4] / 256. * 4.;
+    let amplitude2 = this.ram16[state + 5] / 256. * 4.;
+    console.log(amplitude0, amplitude1, amplitude2)
 
     for (let i = 0; i < n; i++) {
         let sample = i + Math.floor(oldsample)
@@ -96,11 +100,10 @@ ReSID.prototype.Update = function (count) {
                 frequency0,
                 frequency1,
                 frequency2,
-                1.,
-                1.,
-                1.);
+                amplitude0,
+                amplitude1,
+                amplitude2);
        }
-
     }
     // just for safety, copy the last sample to prevent clicks
     let index = ((n + Math.floor(oldsample)) + 60000) % (this.soundbuffer.sampleslen)
