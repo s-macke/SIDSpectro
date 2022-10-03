@@ -23,11 +23,11 @@ function Spectrum(screenid) {
     this.ctx.fillText("Click on 'Slightly Random Choice.sid' to start.", 50, 50);
 }
 
-Spectrum.prototype.getBackBuffer = function() {
+Spectrum.prototype.getBackBuffer = function () {
     return this.backBuffer;
 }
 
-Spectrum.prototype.getMousePos = function(evt) {
+Spectrum.prototype.getMousePos = function (evt) {
     let rect = this.canvas.getBoundingClientRect();
     return {
         x: evt.clientX - rect.left,
@@ -35,15 +35,10 @@ Spectrum.prototype.getMousePos = function(evt) {
     };
 }
 
-Spectrum.prototype.redrawSpectrum = function() {
+Spectrum.prototype.redrawSpectrum = function () {
     let pos = ((c64.sid.soundbuffer.GetTime() * 22050.) >> 6) % this.canvas.width;
-    /*
-        c64.canvas.putImageData(c64.imagedata, 0, 0);
-        c64.canvas.fillStyle="#FFFFFF";
-        c64.canvas.fillText(c64.sid.soundbuffer.GetTime(),  45, 30);
-    */
-    this.ctx.putImageData(c64.imagedata, -pos, 0);
-    this.ctx.putImageData(c64.imagedata, this.canvas.width - pos, 0);
+    this.ctx.putImageData(this.backBuffer, -pos, 0);
+    this.ctx.putImageData(this.backBuffer, this.canvas.width - pos, 0);
 
     this.ctx.fillStyle = "#000000";
     this.ctx.fillRect(0, 0, 40, this.canvas.height);
@@ -78,7 +73,7 @@ Spectrum.prototype.redrawSpectrum = function() {
     //window.setTimeout(RedrawSpectrum, 500);
 }
 
-Spectrum.prototype.OnCanvasClick = function(event) {
+Spectrum.prototype.OnCanvasClick = function (event) {
     let mousepos = this.getMousePos(event);
     let x = mousepos.x;
     let y = mousepos.y;
@@ -96,4 +91,44 @@ Spectrum.prototype.OnCanvasClick = function(event) {
                 sidfile = sidfiletemp;
             }
     }
+}
+
+Spectrum.prototype.onUpdateSpectrum = function (i, frequency0, frequency1, frequency2, amplitude0, amplitude1, amplitude2) {
+    let freq = 0
+    let ampl = 0
+    let column = ((i >> 7) % 600) * 4;
+    let data = this.backBuffer.data;
+    for (let j = 0; j < 400; j++) {
+        let offset = 2400 * j + column;
+        data[offset + 0] = 0x00;
+        data[offset + 1] = 0x00;
+        data[offset + 2] = 0x00;
+        data[offset + 3] = 0xFF;
+    }
+    freq = Math.floor(frequency0 * 0.3) + 1;
+    ampl = amplitude0 * 255;
+    if (freq <= 399) {
+        let offset = 2400 * (399 - freq) + column
+        data[offset + 0] = ampl;
+        data[offset + 2400] = ampl * 0.5;
+        data[offset - 2400] = ampl * 0.5;
+    }
+    freq = Math.floor(frequency1 * 0.3) + 1;
+    ampl = amplitude1 * 255;
+    if (freq <= 399) {
+        let offset = 2400 * (399 - freq) + column + 1;
+        data[offset] = ampl;
+        data[offset + 2400] = ampl * 0.5;
+        data[offset - 2400] = ampl * 0.5;
+    }
+    freq = Math.floor(frequency2 * 0.3) + 1;
+    ampl = amplitude2 * 255;
+    if (freq <= 399) {
+        let offset = 2400 * (399 - freq) + column + 2;
+        data[offset] = ampl;
+        data[offset + 2400] = ampl * 0.5;
+        data[offset - 2400] = ampl * 0.5;
+    }
+
+
 }

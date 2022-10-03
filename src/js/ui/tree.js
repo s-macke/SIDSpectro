@@ -203,75 +203,32 @@ function Init() {
     if (initialized) return;
     initialized = true;
     //c64 = new LoopSoundBuffer(44100, 22050);
-    c64 = new C64(spectrum.getBackBuffer());
+    c64 = new C64(spectrum.onUpdateSpectrum.bind(spectrum));
     c64.MainLoop();
     spectrum.redrawSpectrum();
 }
 
-/*
-$(function () { $('#demo1').jstree(); });
-
-
-$("#demo1").jstree({
-    "core" :
-    {
-        "themes" :
-        {
-            "theme" : "default",
-            "icons" : false
-        }
-    }
-});
-
-
 $(function () {
-
-$("#demo1").jstree({
-    "core" :
-    {
-        "data" :
-        {
-            "type" : "xml_nested",
-            "url" : function(n)
-            {
-                console.log("url: " + n.toSource());
-                return n.parent ? n.id : "xml/0.xml";
+    $('#demo1').jstree({
+        'core' : {
+            'data' : {
+                "url" : function(n) {
+                    return n.id === '#' ? "./data/json/root.json" : n.id;
+                },
+                "dataType" : "json" // needed only if you do not supply JSON headers
             },
-            "data" : function(n)
-            {
-                console.log("data: " + n.toSource());
-                   return { 'id' : n.id };
-            }
+        'themes': {
+                'theme': "default",
+                'icons': false,
+                'dots': false
+            },
         }
-    }
-});
+    });
 
-});
-
-$('#demo1').on("changed.jstree", function (e, data) {
-  console.log(data.selected);
-});
-*/
-
-$(function () {
-    $("#demo1").jstree({
-        "xml_data": {
-            "ajax": {
-                "url": function (n) {
-                    return n.attr ? n.attr("id") : "data/xml/0.xml";
-                }
-            },
-            "xsl": "nest"
-        },
-        "themes": {
-            "theme": "default",
-            "icons": false
-        },
-        "plugins": ["themes", "xml_data", "ui"]
-    })
-        .bind("select_node.jstree", function (event, data) {
-            let url = data.rslt.obj.attr("id");
+    $("#demo1").on("select_node.jstree", function (event, data) {
+            console.log(data)
             Init(); // Init on first click, otherwise audio output is prevented
+            let url = data.node.id;
             if (url === "data/C64Music/Slightly Random Choice.sid") {
                 let randomnumber = Math.floor(Math.random() * randomlist.length);
                 url = "data/C64Music/" + randomlist[randomnumber].url;
@@ -286,7 +243,8 @@ $(function () {
                 });
                 return false;
             } else {
-                return data.inst.toggle_node(data.rslt.obj);
+                return data.instance.toggle_node(data.node); // toggle on click.
             }
         })
+
 });

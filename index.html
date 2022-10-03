@@ -4,11 +4,12 @@
     <title>SidSpectro - Online SID Player</title>
     <meta charset="UTF-8">
 
+    <link rel="stylesheet" href="assets/css/style.min.css" />
     <style>
 
         html {
             background-color: #7C70DA;
-            margin: 64px
+            margin: 32px
         }
 
         a:link {
@@ -28,10 +29,19 @@
             font-weight: bold;
         }
 
+        canvas {
+            box-shadow: 0px 0px 3px 3px #000000;
+        }
+
+        table {
+            box-shadow: 0px 0px 3px 3px #3E31A2;
+            background:#3E31A2;
+        }
+
     </style>
 
-    <script src="assets/jquery.js"></script>
-    <script type="text/javascript" src="assets/jquery.jstree.js"></script>
+    <script src="assets/jquery.min.js"></script>
+    <script type="text/javascript" src="assets/jstree.min.js"></script>
 
     <script type="text/javascript" src="src/js/sid/misc.js"></script>
     <script type="text/javascript" src="src/js/sid/tables.js"></script>
@@ -46,7 +56,7 @@
 
 <body onload="InitScreen()">
 
-<table style="background:#3E31A2; border-width:3px;border-style:outset;border-color:#3E31A2;">
+<table>
     <colgroup>
         <col width="30%">
         <col width="600px">
@@ -75,12 +85,12 @@
             <ul>
                 <li>Music Database: <br><a href="https://www.hvsc.c64.org/">High Voltage Sid Collection</a></li>
             </ul>
-
         </td>
         <td>
             <ul>
                 <li>Developed by Sebastian Macke (<a href="https://simulationcorner.net/">simulationcorner.net</a>)</li>
                 <li>Project website: <a href="https://github.com/s-macke/SIDSpectro">GitHub</a></li>
+                <li>Powered by <a href="https://en.wikipedia.org/wiki/ReSID">reSID</a></li>
             </ul>
         </td>
     </tr>

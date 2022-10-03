@@ -25,7 +25,7 @@ string ConvertDir(string dir) {
     if (dir[0] == '+') dir = dir.substr(1);
     if (dir.size() > 2) dir.erase(dir.size() - 1, 1); // remove trailing slash
     else {
-        dir = "0";
+        dir = "root";
     }
     //cout << " -> " << dir << endl;
     return dir;
@@ -33,15 +33,14 @@ string ConvertDir(string dir) {
 
 void ParseDir(string dir) {
     cout << "Parse: " << dir << "\n";
-    string cdir = string("xml/") + ConvertDir(dir) + ".xml";
+    string cdir = string("json/") + ConvertDir(dir) + ".json";
     //cout << "Create: " << cdir << "\n";
     FILE *file = fopen(cdir.c_str(), "w");
     if (file == NULL) {
         fprintf(stderr, "Error: Could not open file\n");
         exit(1);
     }
-    fprintf(file, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    fprintf(file, "<root>\n");
+    fprintf(file, "[\n");
 
     struct dirent **namelist;
     int n;
@@ -52,40 +51,46 @@ void ParseDir(string dir) {
         perror("Couldn't open the directory");
         exit(1);
     }
+    bool first = true;
     for (int i = 0; i < n; i++) {
         struct dirent *ep = namelist[i];
         int length = strlen(ep->d_name);
         if (length == 0) continue;
         if (ep->d_name[0] == '.') continue; // starts with "." or ".."
         //cout << "Entry: " << ep->d_name << " " << int(ep->d_type) << "\n";
+
         if (
                 (ep->d_type == DT_REG) &&
                 (ep->d_name[length - 1] == 'd') &&
                 (ep->d_name[length - 2] == 'i') &&
                 (ep->d_name[length - 3] == 's')) {
-            if (dir == "") {
-                fprintf(file, "  <item id=\"%s\">\n", (rootdir + "/" + startdir + "/" + ep->d_name).c_str());
-            } else {
-                fprintf(file, "  <item id=\"%s\">\n", (rootdir + "/" + startdir + dir + ep->d_name).c_str());
+
+            if (!first) fprintf(file, ",\n");
+            first = false;
+            string id = (rootdir + "/" + startdir + "/" + ep->d_name).c_str();
+            if (dir != "") {
+                id = (rootdir + "/" + startdir + dir + ep->d_name).c_str();
             }
-            fprintf(file, "    <content><name><![CDATA[%s]]></name></content>\n", ep->d_name);
-            fprintf(file, "  </item>\n");
-        }
+            fprintf(file, "  {\"id\": \"%s\", \"text\": \"%s\"}", id.c_str(), ep->d_name);
+        } else
         if (ep->d_type == DT_DIR) {
+            if (!first) fprintf(file, ",\n");
+            first = false;
             string newdir = dir + "/" + ep->d_name + "/";
-            string cdir2 = string("xml/") + ConvertDir(newdir) + ".xml";
+            string cdir2 = string("json/") + ConvertDir(newdir) + ".json";
 
             if (IsDirectory(startdir + newdir)) {
-                fprintf(file, "  <item id=\"%s\" state=\"open\">\n", (rootdir + "/" + cdir2).c_str());
-                fprintf(file, "    <content><name><![CDATA[%s]]></name></content>\n", ep->d_name);
-                fprintf(file, "  </item>\n");
-
+                string id = (rootdir + "/" + cdir2);
+                fprintf(file, "  {\"id\": \"%s\", \"text\": \"%s\", \"children\": true}", id.c_str(), ep->d_name);
                 ParseDir(newdir);
             }
+        } else {
+            //fprintf(stderr, "Error: Unknown file type\n");
+            //exit(1);
         }
     }
 
-    fprintf(file, "</root>\n");
+    fprintf(file, "\n]\n");
     fclose(file);
 }
 

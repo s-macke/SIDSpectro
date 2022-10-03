@@ -1,8 +1,8 @@
-*.xml
+*.json
 *.sid
 
 a.out
-toxml
+tojson
 
 resid.wasm
 

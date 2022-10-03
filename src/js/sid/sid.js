@@ -2,7 +2,7 @@
 // ---------------------- SID ----------------------
 // -------------------------------------------------
 
-//use strict"
+"use strict"
 let samples = 44100;
 
 let NOISETABLESIZE = 256;
@@ -161,7 +161,6 @@ SIDChannel.prototype.NextSample = function () {
         case wvpulse:
             if (phase < this.pulsewidth) this.oscamplitude = 1; else this.oscamplitude = 0;
             break;
-
     }
     this.amplitude += this.damplitude;
 
@@ -218,13 +217,13 @@ SIDChannel.prototype.NextSample = function () {
     return y;
 }
 
-function SID6581(_cyclespersecond, _data) {
+function SID6581(_cyclespersecond, _onUpdateSpectrum) {
     //_SIDCreate();
     this.playposition = 0;
     this.writeposition = 0;
     this.regs = new Uint8Array(32);
     this.channel = new Array(3);
-    this.data = _data;
+    this.onUpdateSpectrum = _onUpdateSpectrum
     this.cyclespersecond = _cyclespersecond;
     this.channel[0] = new SIDChannel();
     this.channel[1] = new SIDChannel();
@@ -261,39 +260,13 @@ SID6581.prototype.Update = function (count) {
     for (let i = Math.floor(oldsample); i < Math.floor(currentsample); i++) {
         this.soundbuffer.buffer[(i + 60000) % (this.soundbuffer.sampleslen)] = this.NextSample();
         if ((i & 127) === 0) {
-            let column = ((i >> 7) % 600) * 4;
-            let data = this.data;
-            for (let j = 0; j < 400; j++) {
-                let offset = 2400 * j + column;
-                data[offset + 0] = 0x00;
-                data[offset + 1] = 0x00;
-                data[offset + 2] = 0x00;
-                data[offset + 3] = 0xFF;
-            }
-            let freq = Math.floor(this.channel[0].frequency * 0.3) + 1;
-            let ampl = this.channel[0].amplitude * 255;
-            if (freq <= 399) {
-                let offset = 2400 * (399 - freq) + column
-                data[offset + 0] = ampl;
-                data[offset + 2400] = ampl * 0.5;
-                data[offset - 2400] = ampl * 0.5;
-            }
-            freq = Math.floor(this.channel[1].frequency * 0.3) + 1;
-            ampl = this.channel[1].amplitude * 255;
-            if (freq <= 399) {
-                let offset = 2400 * (399 - freq) + column + 1;
-                data[offset] = ampl;
-                data[offset + 2400] = ampl * 0.5;
-                data[offset - 2400] = ampl * 0.5;
-            }
-            freq = Math.floor(this.channel[2].frequency * 0.3) + 1;
-            ampl = this.channel[2].amplitude * 255;
-            if (freq <= 399) {
-                let offset = 2400 * (399 - freq) + column + 2;
-                data[offset] = ampl;
-                data[offset + 2400] = ampl * 0.5;
-                data[offset - 2400] = ampl * 0.5;
-            }
+            this.onUpdateSpectrum(i,
+                this.channel[0].frequency,
+                this.channel[1].frequency,
+                this.channel[2].frequency,
+                this.channel[0].amplitude,
+                this.channel[1].amplitude,
+                this.channel[2].amplitude);
         }
     }
 }

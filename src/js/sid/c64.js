@@ -6,7 +6,7 @@
 
 //var keyboard = new KeyboardInput();
 
-function C64(_imagedata) {
+function C64(onUpdateSpectrum) {
     this.cyclespersecond = 1000000;
     this.mem = new Uint8Array(0x10000);
     this.basic_in = true;
@@ -21,9 +21,7 @@ function C64(_imagedata) {
     this.cia2 = new CIA6526(this.cpu.NonMaskableInterrupt.bind(this.cpu), 2);
     //this.cia2 = new CIA6526(this.cpu.MaskableInterrupt.bind(this.cpu), 2);
     this.vic = new VICII(this.mem, this.cpu.MaskableInterrupt.bind(this.cpu));
-
-    this.imagedata = _imagedata;
-    this.sid = new SID6581(this.cyclespersecond, this.imagedata.data);
+    this.sid = new SID6581(this.cyclespersecond, onUpdateSpectrum);
     this.starttime = this.sid.soundbuffer.GetTime();
     this.count = 0;
 }
