@@ -30,6 +30,13 @@ short* GetBuffer() {
     return buf;
 }
 
+reSID::SID::State* GetState() {
+    static reSID::SID::State state;
+    state = sid->read_state();
+    return &state;
+}
+
+
 reSID::cycle_count GetDeltaT() {
     return delta_t;
 }

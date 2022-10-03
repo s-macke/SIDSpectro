@@ -235,6 +235,11 @@ function SID6581(_cyclespersecond, _onUpdateSpectrum) {
     this.enabled = true;
 }
 
+SID6581.prototype.Activate = function () {
+    this.soundbuffer.Activate();
+    this.starttime = 0; // this.soundbuffer.GetTime();
+}
+
 SID6581.prototype.Reset = function () {
     for (let i = 0; i < 32; i++)
         this.Write(i, 0);

@@ -189,21 +189,22 @@ function OnLoadSID(arraybuffer, song) {
     sidfiletemp = sidfile; // to change the songs and show the number of songs
 }
 
-let initialized = false;
+let activated = false;
 let c64 = {};
 let spectrum = {}
 let sidfile = {}
 let sidfiletemp = {}
 
-function InitScreen() {
-    spectrum = new Spectrum("screen")
-}
-
 function Init() {
-    if (initialized) return;
-    initialized = true;
+    spectrum = new Spectrum("screen")
     //c64 = new LoopSoundBuffer(44100, 22050);
     c64 = new C64(spectrum.onUpdateSpectrum.bind(spectrum));
+}
+
+function Activate() {
+    if (activated) return;
+    activated = true;
+    c64.sid.Activate();
     c64.MainLoop();
     spectrum.redrawSpectrum();
 }
@@ -225,9 +226,9 @@ $(function () {
         }
     });
 
-    $("#demo1").on("select_node.jstree", function (event, data) {
+    $("#demo1").on("select_node.jstree", async function (event, data) {
             console.log(data)
-            Init(); // Init on first click, otherwise audio output is prevented
+            Activate(); // Activate audio, otherwise audio output is prevented
             let url = data.node.id;
             if (url === "data/C64Music/Slightly Random Choice.sid") {
                 let randomnumber = Math.floor(Math.random() * randomlist.length);

@@ -10,17 +10,18 @@ function LoopSoundBuffer(samples, sampleslen) {
     this.samples = samples;
     this.sampleslen = sampleslen;
     this.buffer = new Float32Array(this.sampleslen);
+    this.activated = false;
+    this.DummySetup();
+}
 
-    //this.DummySetup();
-    //return;
-    //this.GetTime = function(){return ((new Date().getTime()))/1000.;};
+LoopSoundBuffer.prototype.Activate = function (pos) {
+    if (this.activated) return;
 
     if (typeof AudioContext !== "undefined") {
         this.context = new window.AudioContext();
         this.WebkitSetup();
-    } else {
-        this.DummySetup();
     }
+    this.activated = true;
 }
 
 LoopSoundBuffer.prototype.PlayBuffer = function (pos) {
@@ -43,12 +44,10 @@ LoopSoundBuffer.prototype.PlayBuffer = function (pos) {
     this.source[pos % 4] = source;
 }
 
-
 LoopSoundBuffer.prototype.OnEnded = function () {
     this.PlayBuffer(this.pos);
     this.pos++;
 }
-
 
 LoopSoundBuffer.prototype.WebkitSetup = function () {
     this.GetTime = function () {

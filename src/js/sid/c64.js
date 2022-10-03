@@ -7,7 +7,7 @@
 //var keyboard = new KeyboardInput();
 
 function C64(onUpdateSpectrum) {
-    this.cyclespersecond = 1000000;
+    this.cyclespersecond = 985248; // PAL
     this.mem = new Uint8Array(0x10000);
     this.basic_in = true;
     this.kernel_in = true;
@@ -21,7 +21,8 @@ function C64(onUpdateSpectrum) {
     this.cia2 = new CIA6526(this.cpu.NonMaskableInterrupt.bind(this.cpu), 2);
     //this.cia2 = new CIA6526(this.cpu.MaskableInterrupt.bind(this.cpu), 2);
     this.vic = new VICII(this.mem, this.cpu.MaskableInterrupt.bind(this.cpu));
-    this.sid = new SID6581(this.cyclespersecond, onUpdateSpectrum);
+    //this.sid = new SID6581(this.cyclespersecond, onUpdateSpectrum);
+    this.sid = new ReSID(this.cyclespersecond, onUpdateSpectrum);
     this.starttime = this.sid.soundbuffer.GetTime();
     this.count = 0;
 }
@@ -130,12 +131,13 @@ C64.prototype.MainLoop = function () {
 
     let currenttime = this.sid.soundbuffer.GetTime();
     let elapsedtime = currenttime - this.starttime;
-    let wait = this.count / 1000. - elapsedtime * 1000.;
+    let wait = (this.count * 1000. / this.cyclespersecond) - elapsedtime * 1000.;
     if (wait < 0) {
         if (wait < -1000) // reset, we are too far off
         {
+            console.log("Timer adjustment: " + wait);
             c64.sid.starttime = elapsedtime;
-            c64.count = elapsedtime * 1000000.;
+            c64.count = elapsedtime * this.cyclespersecond;
         }
         wait = 0;
     }
