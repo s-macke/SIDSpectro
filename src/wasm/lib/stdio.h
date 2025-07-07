@@ -5,7 +5,10 @@
 #error "Wasm target only"
 #endif
 
+extern "C" {
+
 int printf(const char *format, ...);
 int puts(const char *s);
 
+}
 #endif

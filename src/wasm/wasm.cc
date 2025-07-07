@@ -1,8 +1,11 @@
 
-#include "sid.h"
-#include "voice.h"
-#include "siddefs.h"
-#include <debug.h>
+#include "reSID/sid.h"
+#include "reSID/voice.h"
+#include "reSID/siddefs.h"
+#include "c64/c64.h"
+#include "sidfile.h"
+#include "debug.h"
+
 
 reSID::SID *sid;
 short *buf;
@@ -11,8 +14,11 @@ reSID::cycle_count delta_t; // int
 extern "C"
 {
 
-void Init() {
+void _initialize() {
     debug("Init");
+    SIDFileInit();
+    C64Init();
+
     sid = new reSID::SID();
     sid->set_sampling_parameters(985248, reSID::SAMPLE_RESAMPLE, 44100);
     //sid->enable_filter(true);
@@ -20,20 +26,23 @@ void Init() {
 }
 
 void Reset() {
+    C64Reset();
     sid->reset();
     delta_t = 0;
 }
 
 int Clock(reSID::cycle_count _delta_t, int n) {
     delta_t = _delta_t;
+    // TODO
+    C64MainLoop(_delta_t);
     return sid->clock(delta_t, buf, n, 1);
 }
 
-short* GetBuffer() {
+short* GetSIDBuffer() {
     return buf;
 }
 
-short* GetState() {
+short* GetSIDState() {
     static short data[3 + 3];
     data[0] = sid->voice[0].wave.freq;
     data[1] = sid->voice[1].wave.freq;
@@ -42,11 +51,6 @@ short* GetState() {
     data[4] = sid->voice[1].envelope.output();
     data[5] = sid->voice[2].envelope.output();
     return data;
-}
-
-
-reSID::cycle_count GetDeltaT() {
-    return delta_t;
 }
 
 reSID::reg8 Read(reSID::reg8 offset) {
@@ -64,7 +68,7 @@ void Write(reSID::reg8 offset, reSID::reg8 value) {
 #include<stdio.h>
 
 int main() {
-    Init();
+    _initialize();
     Reset();
 
     Write(24, 15); // full volume
@@ -80,7 +84,7 @@ int main() {
     printf("n=%i\n", n);
 
     for(int i=0; i<n; i++) {
-        printf("%i\n", GetBuffer()[i]);
+        printf("%i\n", GetSIDBuffer()[i]);
     }
     return 0;
 }

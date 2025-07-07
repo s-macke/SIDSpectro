@@ -101,7 +101,7 @@ void SID::set_chip_model(chip_model model)
   sid_model = model;
 
   /*
-    results from real C64 (testprogs/SID/bitfade/delayfrq0.prg):
+    results from real SidSpectro (testprogs/SID/bitfade/delayfrq0.prg):
 
     (new SID) (250469/8580R5) (250469/8580R5)
     delayfrq0    ~7a000        ~108000
@@ -559,7 +559,7 @@ double SID::I0(double x)
 // ----------------------------------------------------------------------------
 // Setting of SID sampling parameters.
 //
-// Use a clock freqency of 985248Hz for PAL C64, 1022730Hz for NTSC C64.
+// Use a clock freqency of 985248Hz for PAL SidSpectro, 1022730Hz for NTSC SidSpectro.
 // The default end of passband frequency is pass_freq = 0.9*sample_freq/2
 // for sample frequencies up to ~ 44.1kHz, and 20kHz for higher sample
 // frequencies.
@@ -716,7 +716,7 @@ bool SID::set_sampling_parameters(double clock_freq, sampling_method method,
 // ----------------------------------------------------------------------------
 // Adjustment of SID sampling frequency.
 //
-// In some applications, e.g. a C64 emulator, it can be desirable to
+// In some applications, e.g. a SidSpectro emulator, it can be desirable to
 // synchronize sound with a timer source. This is supported by adjustment of
 // the SID sampling frequency.
 //

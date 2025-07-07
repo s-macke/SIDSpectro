@@ -1,7 +1,7 @@
 "use strict";
 
 let randomlist = [];
-
+/*
 randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_I.sid", song: 1});
 randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_I.sid", song: 2});
 randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_I.sid", song: 3});
@@ -14,6 +14,8 @@ randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Final_Synth_Sample_II.sid", song:
 randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Synth_Sample_III.sid", song: 1});
 randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Synth_Sample_III.sid", song: 3});
 randomlist.push({url: "MUSICIANS/H/Hubbard_Rob/Synth_Sample_III.sid", song: 11});
+*/
+
 randomlist.push({url: "MUSICIANS/H/Huelsbeck_Chris/Circus_Attractions.sid", song: 1});
 randomlist.push({url: "MUSICIANS/H/Huelsbeck_Chris/Compilation_I.sid", song: 3});
 randomlist.push({url: "MUSICIANS/H/Huelsbeck_Chris/Compilation_I.sid", song: 1});
@@ -58,7 +60,7 @@ randomlist.push({url: "MUSICIANS/K/Klaewer_Oliver/Maniax.sid", song: 1});
 randomlist.push({url: "MUSICIANS/A/Abbott_Chris/Popcorn.sid", song: 1});
 randomlist.push({url: "MUSICIANS/0-9/20CC/Paul_Falco/Bomberboy.sid", song: 1});
 randomlist.push({url: "MUSICIANS/0-9/20CC/Paul_Falco/Lambada.sid", song: 1});
-randomlist.push({url: "MUSICIANS/0-9/20CC/Paul_Falco/TV_Tunes_MIX.sid", song: 1});
+randomlist.push({url: "MUSICIANS/0-9/20CC/Paul_Falco/TV_Tunes_Mix.sid", song: 1});
 randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/1988_Top_40_MEGAMIX.sid", song: 1});
 randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Popcorn_Mix.sid", song: 1});
 randomlist.push({url: "MUSICIANS/0-9/20CC/van_Santen_Edwin/Megamix_II_C64.sid", song: 1});
@@ -176,7 +178,7 @@ randomlist.push({url: "MUSICIANS/D/Dunn_David/Elite.sid", song: 2});
 randomlist.push({url: "MUSICIANS/C/Clarke_Peter/Bubble_Bobble.sid", song: 1});
 randomlist.push({url: "MUSICIANS/T/Tel_Jeroen/Alternative_Fuel.sid", song: 1});
 randomlist.push({url: "MUSICIANS/T/Tel_Jeroen/Looking_Around.sid", song: 1});
-randomlist.push({url: "Flimbos_Quest (subtune 3).sid", song: 1});
+randomlist.push({url: "MUSICIANS/O/Ouwehand_Reyn/Flimbos_Quest.sid", song: 3});
 
 //randomlist.push({url: "MUSICIANS/R/Rock/Hubbard_Medley.sid", song: 1});
 //randomlist.push({url: "Other/Top100/Driller.sid", song: 1});
@@ -194,12 +196,6 @@ let c64 = {};
 let spectrum = {}
 let sidfile = {}
 let sidfiletemp = {}
-
-function Init() {
-    spectrum = new Spectrum("screen")
-    //c64 = new LoopSoundBuffer(44100, 22050);
-    c64 = new C64(spectrum.onUpdateSpectrum.bind(spectrum));
-}
 
 function Activate() {
     if (activated) return;

@@ -1,4 +1,4 @@
-#include"debug.h"
+#include"../debug.h"
 
 typedef unsigned long size_t;
 #define NULL 0
@@ -107,42 +107,7 @@ double ceil(double num) {
     return (num < 0) ? inum : inum + 1;
 }
 
-extern char __heap_base; // start of dynamic memory allocation (heap). Exported by clang
-char *allocPointer = NULL;
-
-void *malloc(size_t size) {
-    if (allocPointer == NULL) { // First call: initialize
-        allocPointer = &__heap_base;
-    }
-    void *p = allocPointer;
-    allocPointer += size;
-    return p;
-}
-
-void *operator new[](size_t size) {
-    debug("Allocating array of size ");
-    debugint(size);
-    return malloc(size);
-}
-
-void *operator new(size_t size) {
-    debug("Allocating object of size ");
-    debugint(size);
-    return malloc(size);
-}
-
-void operator delete[](void *ptr) noexcept {
-    debug("Deleting array");
-    // ignore
-}
-
 extern "C" {
-
-int __cxa_atexit(void (*func)(void *), void *arg, void *dso_handle) {
-    debug("__cxa_atexit called: This should neven happen in wasm");
-    // never used
-    return 0;
-}
 
 void *memset(void *s, int c, size_t n) {
     char *d = (char *) s;
@@ -162,7 +127,30 @@ void *memcpy(void *dest, const void *src, unsigned long n) {
     return dest;
 }
 
+extern char __heap_base; // start of dynamic memory allocation (heap). Exported by clang
+char *allocPointer = NULL;
+
+void *malloc(size_t size) {
+    if (allocPointer == NULL) { // First call: initialize
+        allocPointer = &__heap_base;
+    }
+    void *p = allocPointer;
+    allocPointer += size;
+    return p;
 }
+
+void *calloc(size_t nmemb, size_t size) {
+    void *p = malloc(nmemb * size);
+    memset(p, 0, nmemb * size);
+    return p;
+}
+
+int __cxa_atexit(void (*func)(void *), void *arg, void *dso_handle) {
+    debug("__cxa_atexit called: This should neven happen in wasm");
+    // never used
+    return 0;
+}
+
 
 // from stack overflow
 int itoa(int value, char *sp, int radix)
@@ -202,20 +190,33 @@ int itoa(int value, char *sp, int radix)
     return len;
 }
 
-void debugint(int i) {
-    char buf[18];
-    memset(buf, 0, 18);
-    itoa(i, buf, 10);
-    debug(buf);
-}
-
 // Very basic printf implementation.
 int printf(const char *format, ...) {
     debug(format);
     return 0;
 }
+
 int puts(const char *s) {
     debug(s);
     debug("\n");
     return 0;
+}
+
+} // extern "C"
+
+void *operator new[](size_t size) {
+    //debug("Allocating array of size ");
+    //debugint(size);
+    return malloc(size);
+}
+
+void *operator new(size_t size) {
+    //debug("Allocating object of size ");
+    //debugint(size);
+    return malloc(size);
+}
+
+void operator delete[](void *ptr) noexcept {
+    //debug("Deleting array");
+    // ignore
 }

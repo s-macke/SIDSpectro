@@ -30,11 +30,13 @@
         }
 
         canvas {
-            box-shadow: 0px 0px 3px 3px #000000;
+            box-shadow: 0 0 3px #000000;
+            border: none
         }
 
         table {
-            box-shadow: 0px 0px 3px 3px #3E31A2;
+            box-shadow: 0 0 3px #3E31A2;
+            border: none;
             background:#3E31A2;
         }
 
@@ -42,7 +44,9 @@
 
     <script src="assets/jquery.min.js"></script>
     <script type="text/javascript" src="assets/jstree.min.js"></script>
+    <script type="text/javascript" src="src/js/sidSpectro.js"></script>
 
+<!--
     <script type="text/javascript" src="src/js/sid/misc.js"></script>
     <script type="text/javascript" src="src/js/sid/tables.js"></script>
     <script type="text/javascript" src="src/js/sid/vic.js"></script>
@@ -53,9 +57,10 @@
     <script type="text/javascript" src="src/js/sid/cpu.js"></script>
     <script type="text/javascript" src="src/js/sid/sidfile.js"></script>
     <script type="text/javascript" src="src/js/sid/c64.js"></script>
+-->
 </head>
 
-<body onload="Init();">
+<body onload="new SidSpectro();">
 
 <table>
     <colgroup>

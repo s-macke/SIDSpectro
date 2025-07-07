@@ -25,7 +25,7 @@ function ReSID(_cyclespersecond, _onUpdateSpectrum) {
         (module) => {
             this.reSID = module.instance.exports
             console.log(this.reSID)
-            this.reSID.Init();
+            this.reSID._initialize();
             this.reSID.Reset();
             console.log("reSID initialized")
         }
@@ -40,24 +40,6 @@ ReSID.prototype.Activate = function () {
 
 ReSID.prototype.Reset = function () {
     this.reSID.Reset();
-}
-
-let str = "";
-
-ReSID.prototype.Stdout = function (strp) {
-    for (let i = 0; i < 256; i++) {
-        if (this.ram[strp + i] === 0) break;
-        if (this.ram[strp + i] < 0x20) {
-            if (this.ram[strp + i] === 0x0A) {
-                console.log(str);
-                str = "";
-                continue;
-            }
-        }
-        str += String.fromCharCode(this.ram[strp + i]);
-    }
-    console.log(str);
-    str = "";
 }
 
 ReSID.prototype.Read = function (addr) {
@@ -88,7 +70,7 @@ ReSID.prototype.Update = function (count) {
     let amplitude0 = this.ram16[state + 3] / 256. * 4.;
     let amplitude1 = this.ram16[state + 4] / 256. * 4.;
     let amplitude2 = this.ram16[state + 5] / 256. * 4.;
-    console.log(amplitude0, amplitude1, amplitude2)
+    //console.log(amplitude0, amplitude1, amplitude2)
 
     for (let i = 0; i < n; i++) {
         let sample = i + Math.floor(oldsample)
